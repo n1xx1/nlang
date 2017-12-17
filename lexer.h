@@ -16,10 +16,11 @@ enum token {
 	T_FLOAT,
 
 	// DELIMITERS
+	T_SEMI, // ;
 	T_LBRACE, // {
 	T_RBRACE, // }
-	T_LBRACKET, // [
-	T_RBRACKET, // ]
+	T_LBRACK, // [
+	T_RBRACK, // ]
 	T_LPAREN, // (
 	T_RPAREN, // )
 	T_DOT, // .
@@ -63,20 +64,22 @@ enum token {
 	T_ASSIGN, // =
 	T_ASSIGN_ADD, // +=
 	T_ASSIGN_SUB, // -=
-	T_ASSIGN_MUL, // /=
+	T_ASSIGN_MUL, // *=
+	T_ASSIGN_REM, // %=
 	T_ASSIGN_DIV, // /=
 	T_ASSIGN_OR, // |=
 	T_ASSIGN_AND, // &=
 	T_ASSIGN_XOR, // ^=
 	T_ASSIGN_SHL, // <<=
 	T_ASSIGN_SHR, // >>=
-	T_ASSIGN_LOR, // ||=
-	T_ASSIGN_LAND, // &&=
 
-	T_LET, // let
-	T_CONST, // const
-	T_FN, // func
-	T_TYPE, // type
+	T_KW_LET, // let
+	T_KW_CONST, // const
+	T_KW_FN, // func
+	T_KW_TYPE, // type
+	T_KW_BREAK, // break
+	T_KW_CONTINUE, // continue
+	T_KW_RETURN, // return
 };
 
 
@@ -85,18 +88,33 @@ public:
 	lexer(const char* src, int w);
 	void next();
 
+	int _tline, _tcol;
+	token _ttok;
+	std::string _tlit;
+
 private:
+	void ident();
+	void number(u32 c);
+	void line_comment();
+	void full_comment();
+	void error(std::string err);
+
+	u32 getr();
+	void ungetr();
+	void ungetr2();
+
+	void start_lit();
+	std::string stop_lit();
+
 	const char* _src;
 	int _r0, _r, _w;
 	int _line0, _line;
 	int _col0, _col;
+	int _suf;
 
 	bool _nlsemi;
-
-	int _tline, _tcol;
-	token _ttok;
-	int _tbegin, _tend;
 };
 
+std::string token_to_string(token tk);
 
 }
