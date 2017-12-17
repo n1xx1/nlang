@@ -1,9 +1,8 @@
-#include <string>
-#include <type_traits>
+#pragma once
+
+#include "common.h"
 
 namespace nlang {
-
-using u32 = uint32_t;
 
 enum token {
 	T_UNKNOWN,

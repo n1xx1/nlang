@@ -411,20 +411,20 @@ std::string lexer::stop_lit() {
 
 std::string nlang::token_to_string(token tk) {
 	switch(tk) {
-	case T_EOF: return "TK_EOF";
+	case T_EOF: return "T_EOF";
 
-	case T_IDENT: return "TK_IDENT";
-	case T_STRING: return "TK_STRING";
-	case T_INT: return "TK_INT";
-	case T_FLOAT: return "TK_FLOAT";
+	case T_IDENT: return "T_IDENT";
+	case T_STRING: return "T_STRING";
+	case T_INT: return "T_INT";
+	case T_FLOAT: return "T_FLOAT";
 
 	case T_SEMI: return "T_SEMI";
-	case T_LBRACE: return "TK_LBRACE";
-	case T_RBRACE: return "TK_RBRACE";
-	case T_LBRACK: return "TK_LBRACK";
-	case T_RBRACK: return "TK_RBRACK";
-	case T_LPAREN: return "TK_LPAREN";
-	case T_RPAREN: return "TK_RPAREN";
+	case T_LBRACE: return "T_LBRACE";
+	case T_RBRACE: return "T_RBRACE";
+	case T_LBRACK: return "T_LBRACK";
+	case T_RBRACK: return "T_RBRACK";
+	case T_LPAREN: return "T_LPAREN";
+	case T_RPAREN: return "T_RPAREN";
 	case T_DOT: return "T_DOT";
 	case T_DOTDOTDOT: return "T_DOTDOTDOT";
 	case T_COLON: return "T_COLON";
@@ -451,15 +451,15 @@ std::string nlang::token_to_string(token tk) {
 	case T_ASSIGN_SHL: return "T_ASSIGN_SHL";
 	case T_ASSIGN_SHR: return "T_ASSIGN_SHR";
 
-	case T_ARROW: return "TK_ARROW";
-	case T_DARROW: return "TK_DARROW";
+	case T_ARROW: return "T_ARROW";
+	case T_DARROW: return "T_DARROW";
 
-	case T_EQ: return "TK_EQ";
-	case T_LT: return "TK_LT";
-	case T_GT: return "TK_GT";
-	case T_LTE: return "TK_LTE";
-	case T_GTE: return "TK_GTE";
-	case T_NEQ: return "TK_NEQ";
+	case T_EQ: return "T_EQ";
+	case T_LT: return "T_LT";
+	case T_GT: return "T_GT";
+	case T_LTE: return "T_LTE";
+	case T_GTE: return "T_GTE";
+	case T_NEQ: return "T_NEQ";
 
 
 	case T_KW_LET: return "T_KW_LET";

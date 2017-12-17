@@ -46,6 +46,8 @@ NLang is a compiled, static-typed, imperative programming language. The syntax i
 		// body...
 	}
     
+	// switch statement
+	
     // switch <expr> { case (<expr>, )* <expr>: ; default: ; }
     switch value {
     case 0:
