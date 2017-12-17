@@ -5,7 +5,7 @@
 #include "lexer.h"
 
 const char TESTPROGRAM[] = R"TESTPROGRAM(
-let test1 = example
+let test1 = 1 + 2
 )TESTPROGRAM";
 
 int main() {
