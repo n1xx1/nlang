@@ -13,6 +13,59 @@ NLang is a compiled, static-typed, imperative programming language. The syntax i
     // typed variable
     let var2 = 1 as i32
 
+### Flow Control
+`<init>` is a variable definition, assignment or expression statement, `<cond>` is an expression that returns a boolean, `<incr>` is a assignment or expression statement
+	
+	// if statement
+	
+	// if <init>; <cond> {}
+	if let ch = get_current_char(); ch != -1 {
+		// body...
+	}
+	// if <cond> {}
+	if current_mode == DEBUG {
+		// body...
+	}
+
+	// for statement
+	
+	// for <init>; <cond>; <incr> {}
+	for let i = 0; i < 10; i++ { 
+		// body...
+	}
+	// for <init>; <cond> {}
+	for let running = true; running {
+		// body...
+	}
+	// for <cond> {}
+	for work_is_done() {
+		// body...
+	}
+	// for {}
+	for {
+		// body...
+	}
+    
+    // switch <expr> { case (<expr>, )* <expr>: ; default: ; }
+    switch value {
+    case 0:
+        println("got 0")
+    case 1, 2:
+        println("got 1 or 2")
+    default:
+        println("got something else")
+    }
+    // switch { case (<expr>, )* <cond>: ; default: ; }
+    switch {
+    case get_number() < 10, get_float() < 10:
+        println("cond 1")
+    case get_string() == "":
+        println("cond 2")
+    default:
+        println("no cond")
+    }
+	
+	
 ### Functions
     // function (return type inferred)
     fn func1(param i32) {
@@ -125,7 +178,7 @@ Usually not needed, for library writers only.
     free(raw1)
 
 ### Standard smart pointers
-What should be used instead of malloc. Smart pointers are automatically when they go out of scope.
+What should be used instead of malloc. Smart pointers contents are automatically free when they go out of scope.
 
     let ptr1 = Ptr[u32](10) // typeof(ptr1) is Ptr[u32]
     let raw1 = ptr1.raw() // typeof(ptrraw1) is *u32
@@ -134,4 +187,14 @@ What should be used instead of malloc. Smart pointers are automatically when the
     let val1 = *ptr1 // typeof(val1) is u32
     let ref1 = &(*ptr1) // typeof(ref1) is &u32
     
-
+	let ptr2 = ShPtr[u32](0)
+	// ptr2.refs() is 1
+	{
+		let ptrs = [ptr2, ptr2, ptr2] // typeof(ptrs) is [ShPtr[u32]; 3]
+		// ptr2.refs() is 4
+		for ptr in ptrs {
+			*ptr += 1
+		}
+	}
+	// ptr2.refs() is 1
+	// *ptr2 is 3
