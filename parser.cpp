@@ -238,6 +238,8 @@ void parser::advance(std::initializer_list<token> tks) {
 }
 
 void parser::error(std::string msg, int line, int col) {
+	if(line == -1) line = _lex._tline;
+	if(col == -1) col = _lex._tcol;
 	throw new std::runtime_error(msg + " at " + std::to_string(line) + ":" + std::to_string(col));
 }
 
@@ -254,5 +256,13 @@ void parser::syntax_error(std::string msg, int line, int col) {
 		error("syntax error: " + msg);
 		return;
 	}
-	error("syntax error: unexpected " + token_to_string(_lex._ttok) + msg);
+	std::string tok = "";
+	if(_lex._ttok == T_IDENT || _lex._ttok == T_SEMI) {
+		tok = _lex._tlit;
+	} else if(T_INT <= _lex._ttok && _lex._ttok <= T_FLOAT) {
+		tok = "literal " + _lex._tlit;
+	} else {
+		tok = token_to_text(_lex._ttok);
+	}
+	error("syntax error: unexpected " + tok + msg);
 }

@@ -6,79 +6,9 @@ namespace nlang {
 
 enum token {
 	T_UNKNOWN,
-	T_EOF,
-
-	T_IDENT,
-	T_STRING,
-	T_CHAR,
-	T_INT,
-	T_FLOAT,
-
-	// DELIMITERS
-	T_SEMI, // ;
-	T_LBRACE, // {
-	T_RBRACE, // }
-	T_LBRACK, // [
-	T_RBRACK, // ]
-	T_LPAREN, // (
-	T_RPAREN, // )
-	T_DOT, // .
-	T_DOTDOTDOT, // ...
-	T_COMMA, // ,
-	T_COLON, // :
-
-	// INC OPERATORS
-	T_INC, // ++
-	T_DEC, // --
-
-	// OPERATORS
-	T_ARROW, // ->
-	T_DARROW, // =>
-	T_NOT, // !
-	// precLOR
-	T_LOR, // ||
-	// precLAND
-	T_LAND, // &&
-	// precCOMP
-	T_EQ, // ==
-	T_LT, // <
-	T_GT, // >
-	T_LTE, // <=
-	T_GTE, // >=
-	T_NEQ, // !=
-	// precADD
-	T_ADD, // +
-	T_SUB, // -
-	T_OR, // |
-	T_XOR, // ^
-	// precMUL
-	T_MUL, // *
-	T_DIV, // /
-	T_REM, // %
-	T_AND, // &
-	T_SHL, // <<
-	T_SHR, // >>
-	
-	// ASSIGNMENT OPERATORS
-	T_ASSIGN, // =
-	T_ASSIGN_ADD, // +=
-	T_ASSIGN_SUB, // -=
-	T_ASSIGN_MUL, // *=
-	T_ASSIGN_REM, // %=
-	T_ASSIGN_DIV, // /=
-	T_ASSIGN_OR, // |=
-	T_ASSIGN_AND, // &=
-	T_ASSIGN_XOR, // ^=
-	T_ASSIGN_SHL, // <<=
-	T_ASSIGN_SHR, // >>=
-
-	T_KW_LET, // let
-	T_KW_CONST, // const
-	T_KW_FN, // func
-	T_KW_TYPE, // type
-	T_KW_BREAK, // break
-	T_KW_CONTINUE, // continue
-	T_KW_RETURN, // return
+#define TOKEN(name, text) T_ ## name,
+#include "tokens.inc.h"
+	token_count
 };
 
 
@@ -115,5 +45,5 @@ private:
 };
 
 std::string token_to_string(token tk);
-
+std::string token_to_text(token tk);
 }

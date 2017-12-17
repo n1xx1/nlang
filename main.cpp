@@ -18,8 +18,9 @@ int main() {
 	nlang::parser p(TESTPROGRAM, sizeof(TESTPROGRAM) - 1);
 	try {
 		auto f = p.parse();
-	} catch(const std::exception& ex) {
-		printf("Lexer Exception: %s\n", ex.what());
+	} catch(const std::exception* ex) {
+		printf("Lexer Exception: %s\n", ex->what());
 	}
+	getchar();
 	return 0;
 }

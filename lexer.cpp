@@ -411,65 +411,16 @@ std::string lexer::stop_lit() {
 
 std::string nlang::token_to_string(token tk) {
 	switch(tk) {
-	case T_EOF: return "T_EOF";
+#define TOKEN(name, text) case T_ ## name: return "T_" #name;
+#include "tokens.inc.h"
+	default: return "T_UNKNOWN";
+	}
+}
 
-	case T_IDENT: return "T_IDENT";
-	case T_STRING: return "T_STRING";
-	case T_INT: return "T_INT";
-	case T_FLOAT: return "T_FLOAT";
-
-	case T_SEMI: return "T_SEMI";
-	case T_LBRACE: return "T_LBRACE";
-	case T_RBRACE: return "T_RBRACE";
-	case T_LBRACK: return "T_LBRACK";
-	case T_RBRACK: return "T_RBRACK";
-	case T_LPAREN: return "T_LPAREN";
-	case T_RPAREN: return "T_RPAREN";
-	case T_DOT: return "T_DOT";
-	case T_DOTDOTDOT: return "T_DOTDOTDOT";
-	case T_COLON: return "T_COLON";
-	case T_COMMA: return "T_COMMA";
-
-	case T_INC: return "T_INC";
-	case T_DEC: return "T_DEC";
-
-	case T_ADD: return "T_ADD";
-	case T_SUB: return "T_SUB";
-	case T_MUL: return "T_MUL";
-	case T_REM: return "T_REM";
-	case T_DIV: return "T_DIV";
-
-	case T_ASSIGN: return "T_ASSIGN";
-	case T_ASSIGN_ADD: return "T_ASSIGN_ADD";
-	case T_ASSIGN_SUB: return "T_ASSIGN_SUB";
-	case T_ASSIGN_MUL: return "T_ASSIGN_MUL";
-	case T_ASSIGN_REM: return "T_ASSIGN_REM";
-	case T_ASSIGN_DIV: return "T_ASSIGN_DIV";
-	case T_ASSIGN_OR: return "T_ASSIGN_OR";
-	case T_ASSIGN_AND: return "T_ASSIGN_AND";
-	case T_ASSIGN_XOR: return "T_ASSIGN_XOR";
-	case T_ASSIGN_SHL: return "T_ASSIGN_SHL";
-	case T_ASSIGN_SHR: return "T_ASSIGN_SHR";
-
-	case T_ARROW: return "T_ARROW";
-	case T_DARROW: return "T_DARROW";
-
-	case T_EQ: return "T_EQ";
-	case T_LT: return "T_LT";
-	case T_GT: return "T_GT";
-	case T_LTE: return "T_LTE";
-	case T_GTE: return "T_GTE";
-	case T_NEQ: return "T_NEQ";
-
-
-	case T_KW_LET: return "T_KW_LET";
-	case T_KW_CONST: return "T_KW_CONST";
-	case T_KW_FN: return "T_KW_FN";
-	case T_KW_TYPE: return "T_KW_TYPE";
-	case T_KW_BREAK: return "T_KW_BREAK";
-	case T_KW_CONTINUE: return "T_KW_CONTINUE";
-	case T_KW_RETURN: return "T_KW_RETURN";
-
-	default: return "?unknown?";
+std::string nlang::token_to_text(token tk) {
+	switch(tk) {
+#define TOKEN(name, text) case T_ ## name: return text;
+#include "tokens.inc.h"
+	default: return "<unknown>";
 	}
 }
