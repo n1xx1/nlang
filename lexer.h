@@ -46,4 +46,9 @@ private:
 
 std::string token_to_string(token tk);
 std::string token_to_text(token tk);
+
+bool token_is_operator(token tk);
+int token_operator_prec(token tk);
+bool token_operator_lassoc(token tk);
+
 }

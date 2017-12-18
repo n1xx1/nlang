@@ -260,7 +260,8 @@ void lexer::ident() {
 
 	if(_tlit.size() >= 2) {
 		_nlsemi = false;
-		if(_tlit == "let") _ttok = T_KW_LET;
+		if(_tlit == "as") _ttok = T_AS;
+		else if(_tlit == "let") _ttok = T_KW_LET;
 		else if(_tlit == "const") _ttok = T_KW_CONST;
 		else if(_tlit == "func") _ttok = T_KW_FN;
 		else if(_tlit == "type") _ttok = T_KW_TYPE;
@@ -422,5 +423,27 @@ std::string nlang::token_to_text(token tk) {
 #define TOKEN(name, text) case T_ ## name: return text;
 #include "tokens.inc.h"
 	default: return "<unknown>";
+	}
+}
+
+bool nlang::token_is_operator(token tk) {
+	switch(tk) {
+#define TOKEN_OP(name, text, prec, lassoc) case T_ ## name: return true;
+#include "tokens.inc.h"
+	default: return false;
+	}
+}
+int nlang::token_operator_prec(token tk) {
+	switch(tk) {
+#define TOKEN_OP(name, text, prec, lassoc) case T_ ## name: return prec;
+#include "tokens.inc.h"
+	default: return -1;
+	}
+}
+bool nlang::token_operator_lassoc(token tk) {
+	switch(tk) {
+#define TOKEN_OP(name, text, prec, lassoc) case T_ ## name: return lassoc;
+#include "tokens.inc.h"
+	default: return false;
 	}
 }

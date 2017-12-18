@@ -18,7 +18,7 @@ public:
 	std::unique_ptr<ast_stmt_let> parse_stmt_let();
 
 	std::unique_ptr<ast_expr> parse_expr();
-	std::unique_ptr<ast_expr> parse_expr_binary(int prec);
+	std::unique_ptr<ast_expr> parse_expr_binary(std::unique_ptr<ast_expr> x, int prec);
 	std::unique_ptr<ast_expr> parse_expr_unary();
 	std::unique_ptr<ast_expr> parse_expr_primary(bool keep_parens);
 	std::unique_ptr<ast_expr> parse_expr_operand(bool keep_parens);

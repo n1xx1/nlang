@@ -72,39 +72,45 @@ std::unique_ptr<ast_stmt_const> parser::parse_stmt_const() {
 
 // stmt_let = "let" identifier = expression
 std::unique_ptr<ast_stmt_let> parser::parse_stmt_let() {
-	return nullptr;
+	auto n = std::make_unique<ast_stmt_let>();
+	n->pos_col = _lex._tcol;
+	n->pos_line = _lex._tline;
+
+	n->name = std::move(parse_expr_name());
+	want(T_ASSIGN);
+	n->value = std::move(parse_expr());
+	return n;
 }
 
 // expr = binary_expr
 std::unique_ptr<ast_expr> parser::parse_expr() {
-	return parse_expr_binary(0);
-}
-
-static bool is_operator(token tk) {
-	return T_LOR <= tk && tk <= T_SHR;
-}
-static int operator_prec(token tk) {
-	if(tk == T_LOR) return 1;
-	else if(tk == T_LAND) return 2;
-	else if(T_EQ <= tk && tk <= T_NEQ) return 3;
-	else if(T_ADD <= tk && tk <= T_XOR) return 4;
-	else if(T_MUL <= tk && tk <= T_SHR) return 5;
-	return 0;
+	return parse_expr_binary(parse_expr_unary(), 0);
 }
 
 // binary_expr = unary_expr | expr binop expr
-std::unique_ptr<ast_expr> parser::parse_expr_binary(int prec) {
-	auto x = parse_expr_unary();
-	while(is_operator(_lex._ttok) && operator_prec(_lex._ttok) > prec) {
+std::unique_ptr<ast_expr> parser::parse_expr_binary(std::unique_ptr<ast_expr> x, int prec) {
+	printf("bin0 %s %d\n", token_to_string(_lex._ttok).c_str(), token_is_operator(_lex._ttok));
+	while(token_is_operator(_lex._ttok) && token_operator_prec(_lex._ttok) >= prec) {
+		printf("bin1 tprec: %d; next: %s, %d, %d\n", prec, token_to_string(_lex._ttok).c_str(), token_operator_lassoc(_lex._ttok), token_operator_prec(_lex._ttok));
+
 		auto t = std::make_unique<ast_expr_binop>();
 		t->pos_col = _lex._tcol;
 		t->pos_line = _lex._tline;
 		t->op = _lex._ttok;
 		t->x = std::move(x);
 
-		int tprec = operator_prec(_lex._ttok);
+		int tprec = token_operator_prec(_lex._ttok);
 		_lex.next();
-		t->y = parse_expr_binary(tprec);
+
+		auto y = parse_expr_unary();
+		while(token_is_operator(_lex._ttok) && (
+			(token_operator_lassoc(_lex._ttok) && token_operator_prec(_lex._ttok) > tprec) || 
+			(!token_operator_lassoc(_lex._ttok) && token_operator_prec(_lex._ttok) >= tprec))) {
+
+			printf("bin2 tprec: %d; next: %s, %d, %d\n", tprec, token_to_string(_lex._ttok).c_str(), token_operator_lassoc(_lex._ttok), token_operator_prec(_lex._ttok));
+			y = parse_expr_binary(std::move(y), token_operator_prec(_lex._ttok));
+		}
+		t->y = std::move(y);
 		x = std::move(t);
 	}
 	return x;
