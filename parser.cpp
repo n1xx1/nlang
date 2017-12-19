@@ -10,17 +10,15 @@ std::unique_ptr<ast_file> parser::parse() {
 	_lex.next();
 
 	auto f = std::make_unique<ast_file>();
-	f->pos_col = _lex._tcol;
-	f->pos_line = _lex._tline;
-
+	f->pos = pos();
 
 	while(_lex._ttok != T_EOF) {
 		switch(_lex._ttok) {
-		case T_KW_CONST:
+		case T_CONST:
 			_lex.next();
 			f->stmts.push_back(parse_stmt_const());
 			break;
-		case T_KW_LET:
+		case T_LET:
 			_lex.next();
 			f->stmts.push_back(parse_stmt_let());
 			break;
@@ -28,7 +26,7 @@ std::unique_ptr<ast_file> parser::parse() {
 
 		if(_lex._ttok != T_EOF && !got(T_SEMI)) {
 			syntax_error("after top level declaration");
-			advance({ T_KW_CONST, T_KW_LET });
+			advance({ T_CONST, T_LET });
 		}
 	}
 	return f;
@@ -61,9 +59,7 @@ std::unique_ptr<ast_stmt> parser::parse_stmt_or_null() {
 // stmt_const = "const" identifier = expression
 std::unique_ptr<ast_stmt_const> parser::parse_stmt_const() {
 	auto n = std::make_unique<ast_stmt_const>();
-	n->pos_col = _lex._tcol;
-	n->pos_line = _lex._tline;
-
+	n->pos = pos();
 	n->name = std::move(parse_expr_name());
 	want(T_ASSIGN);
 	n->value = std::move(parse_expr());
@@ -73,12 +69,42 @@ std::unique_ptr<ast_stmt_const> parser::parse_stmt_const() {
 // stmt_let = "let" identifier = expression
 std::unique_ptr<ast_stmt_let> parser::parse_stmt_let() {
 	auto n = std::make_unique<ast_stmt_let>();
-	n->pos_col = _lex._tcol;
-	n->pos_line = _lex._tline;
-
+	n->pos = pos();
 	n->name = std::move(parse_expr_name());
 	want(T_ASSIGN);
 	n->value = std::move(parse_expr());
+	return n;
+}
+
+std::unique_ptr<ast_stmt_if> parser::parse_stmt_if() {
+	auto n = std::make_unique<ast_stmt_if>();
+	n->pos = pos();
+	
+	if(got(T_LET)) {
+		auto x = parse_stmt_let();
+		want(T_SEMI);
+		n->init = move(x);
+		n->cond = parse_expr();
+	} else {
+		auto x = parse_stmt_expr();
+		if(got(T_SEMI)) {
+			n->init = move(x);
+			n->cond = parse_expr();
+		} else {
+			n->cond = move(x->expr);
+		}
+	}
+	want(T_LBRACE);
+
+}
+std::unique_ptr<ast_stmt_for> parser::parse_stmt_for() {
+	return nullptr;
+}
+
+std::unique_ptr<ast_stmt_expr> parser::parse_stmt_expr() {
+	auto n = std::make_unique<ast_stmt_expr>();
+	n->pos = pos();
+	n->expr = parse_expr();
 	return n;
 }
 
@@ -89,13 +115,12 @@ std::unique_ptr<ast_expr> parser::parse_expr() {
 
 // binary_expr = unary_expr | expr binop expr
 std::unique_ptr<ast_expr> parser::parse_expr_binary(std::unique_ptr<ast_expr> x, int prec) {
-	printf("bin0 %s %d\n", token_to_string(_lex._ttok).c_str(), token_is_operator(_lex._ttok));
+	//printf("bin0 %s %d\n", token_to_string(_lex._ttok).c_str(), token_is_operator(_lex._ttok));
 	while(token_is_operator(_lex._ttok) && token_operator_prec(_lex._ttok) >= prec) {
-		printf("bin1 tprec: %d; next: %s, %d, %d\n", prec, token_to_string(_lex._ttok).c_str(), token_operator_lassoc(_lex._ttok), token_operator_prec(_lex._ttok));
+		//printf("bin1 tprec: %d; next: %s, %d, %d\n", prec, token_to_string(_lex._ttok).c_str(), token_operator_lassoc(_lex._ttok), token_operator_prec(_lex._ttok));
 
 		auto t = std::make_unique<ast_expr_binop>();
-		t->pos_col = _lex._tcol;
-		t->pos_line = _lex._tline;
+		t->pos = pos();
 		t->op = _lex._ttok;
 		t->x = std::move(x);
 
@@ -107,7 +132,7 @@ std::unique_ptr<ast_expr> parser::parse_expr_binary(std::unique_ptr<ast_expr> x,
 			(token_operator_lassoc(_lex._ttok) && token_operator_prec(_lex._ttok) > tprec) || 
 			(!token_operator_lassoc(_lex._ttok) && token_operator_prec(_lex._ttok) >= tprec))) {
 
-			printf("bin2 tprec: %d; next: %s, %d, %d\n", tprec, token_to_string(_lex._ttok).c_str(), token_operator_lassoc(_lex._ttok), token_operator_prec(_lex._ttok));
+			//printf("bin2 tprec: %d; next: %s, %d, %d\n", tprec, token_to_string(_lex._ttok).c_str(), token_operator_lassoc(_lex._ttok), token_operator_prec(_lex._ttok));
 			y = parse_expr_binary(std::move(y), token_operator_prec(_lex._ttok));
 		}
 		t->y = std::move(y);
@@ -130,16 +155,14 @@ std::unique_ptr<ast_expr> parser::parse_expr_unary() {
 	switch(_lex._ttok) {
 	case T_MUL: case T_ADD: case T_SUB: case T_NOT: case T_XOR: {
 		auto x = std::make_unique<ast_expr_unop>();
-		x->pos_col = _lex._tcol;
-		x->pos_line = _lex._tline;
+		x->pos = pos();
 		x->op = _lex._ttok;
 		_lex.next();
 		x->x = parse_expr_unary();
 		return std::move(x); }
 	case T_AND: {
 		auto x = std::make_unique<ast_expr_unop>();
-		x->pos_col = _lex._tcol;
-		x->pos_line = _lex._tline;
+		x->pos = pos();
 		x->op = _lex._ttok;
 		_lex.next();
 		x->x = unparen(parse_expr_unary());
@@ -168,13 +191,13 @@ std::unique_ptr<ast_expr> parser::parse_expr_operand(bool keep_parens) {
 		return parse_expr_name();
 	case T_INT: case T_FLOAT: case T_STRING: case T_CHAR: {
 		auto l = std::make_unique<ast_expr_literal>();
-		l->pos_line = _lex._tline;
-		l->pos_col = _lex._tcol;
+		l->pos = pos();
 		l->kind = _lex._ttok;
 		l->val = _lex._tlit;
 		_lex.next();
 		return move(l); }
 	case T_LPAREN: {
+		position bk = pos();
 		int bkline = _lex._tline;
 		int bkcol = _lex._tcol;
 		_lex.next();
@@ -183,8 +206,7 @@ std::unique_ptr<ast_expr> parser::parse_expr_operand(bool keep_parens) {
 
 		if(keep_parens) {
 			auto p = std::make_unique<ast_expr_paren>();
-			p->pos_line = bkline;
-			p->pos_col = bkcol;
+			p->pos = bk;
 			p->x = move(x);
 			return move(p);
 		}
@@ -199,14 +221,21 @@ std::unique_ptr<ast_expr> parser::parse_expr_operand(bool keep_parens) {
 std::unique_ptr<ast_expr_name> parser::parse_expr_name() {
 	if(_lex._ttok == T_IDENT) {
 		auto n = std::make_unique<ast_expr_name>();
-		n->pos_line = _lex._tline;
-		n->pos_col = _lex._tcol;
+		n->pos = pos();
 		n->value = _lex._tlit;
 		_lex.next();
 		return n;
 	}
 	syntax_error("expecting name");
 	return nullptr;
+}
+
+position parser::pos(int line, int col) {
+	if(line == -1 || col == -1) {
+		line = _lex._tline;
+		col = _lex._tcol;
+	}
+	return{ line, col };
 }
 
 bool parser::got(token tk) {

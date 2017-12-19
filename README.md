@@ -153,15 +153,6 @@ NLang is a compiled, static-typed, imperative programming language. The syntax i
     increment1(ref1) // val1 == 3
     increment1(*ptr1) // val1 == 4
     increment1(1) // error, can't convert rvalue to lvalue
-    
-    // rvalue reference arguments
-    fn increment2(num &&i32) {
-        num += 1
-        return num 
-    }
-    increment2(val1) // val1 == 5, returns 5
-    increment2(1) // returns 2
-    increment2(0 + val1) // val1 == 5, returns 6
 
 ### Dynamic memory allocation
 Usually not needed, for library writers only.
@@ -180,7 +171,7 @@ Usually not needed, for library writers only.
     free(raw1)
 
 ### Standard smart pointers
-What should be used instead of malloc. Smart pointers contents are automatically free when they go out of scope.
+What should be used instead of malloc. Smart pointers contents are automatically freed when they go out of scope.
 
     let ptr1 = Ptr[u32](10) // typeof(ptr1) is Ptr[u32]
     let raw1 = ptr1.raw() // typeof(ptrraw1) is *u32

@@ -5,7 +5,7 @@
 #define TOKEN_OP(name, text, prec, lassoc) TOKEN(name, text)
 #endif
 #ifndef TOKEN_KW
-#define TOKEN_KW(name, text) TOKEN(KW_ ## name, text)
+#define TOKEN_KW(name, text) TOKEN(name, text)
 #endif
 
 TOKEN(EOF, "<eof>")
@@ -70,6 +70,9 @@ TOKEN_KW(LET, "let")
 TOKEN_KW(CONST, "const")
 TOKEN_KW(FN, "func")
 TOKEN_KW(TYPE, "type")
+TOKEN_KW(IF, "if")
+TOKEN_KW(ELSE, "else")
+TOKEN_KW(FOR, "for")
 TOKEN_KW(BREAK, "break")
 TOKEN_KW(CONTINUE, "continue")
 TOKEN_KW(RETURN, "return")

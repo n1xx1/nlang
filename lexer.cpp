@@ -388,6 +388,7 @@ u32 lexer::getr() {
 		return (u32)b;
 	}
 	error("UTF8 not implemented yet");
+	return -1;
 }
 void lexer::ungetr() {
 	_r = _r0;

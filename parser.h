@@ -16,6 +16,9 @@ public:
 
 	std::unique_ptr<ast_stmt_const> parse_stmt_const();
 	std::unique_ptr<ast_stmt_let> parse_stmt_let();
+	std::unique_ptr<ast_stmt_if> parse_stmt_if();
+	std::unique_ptr<ast_stmt_for> parse_stmt_for();
+	std::unique_ptr<ast_stmt_expr> parse_stmt_expr();
 
 	std::unique_ptr<ast_expr> parse_expr();
 	std::unique_ptr<ast_expr> parse_expr_binary(std::unique_ptr<ast_expr> x, int prec);
@@ -25,6 +28,7 @@ public:
 	std::unique_ptr<ast_expr_name> parse_expr_name();
 
 private:
+	position pos(int line = -1, int col = -1);
 	bool got(token tk);
 	void want(token tk);
 	void advance(std::initializer_list<token> tks = {});

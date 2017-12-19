@@ -16,6 +16,10 @@ using i16 = int16_t;
 using u8 = uint8_t;
 using i8 = int8_t;
 
+struct position {
+	int line;
+	int col;
+};
 
 template <typename To, typename From, typename Deleter>
 std::unique_ptr<To, Deleter> dynamic_unique_cast(std::unique_ptr<From, Deleter>&& p) {

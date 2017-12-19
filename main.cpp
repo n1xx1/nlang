@@ -21,11 +21,6 @@ Arg arg_type(void(Class::*)(Arg&) const) { return Arg(); }
 template<typename Class, typename Arg>
 Arg arg_type(void(Class::*)(Arg&)) { return Arg(); }
 
-template<typename Functor>
-auto func(Functor f) -> decltype(arg_type(&Functor::operator())) {
-	return arg_type(&Functor::operator());
-}
-
 template <class Func>
 bool visit_ast_node_type(nlang::ast_node* n, Func f) {
 	using To = decltype(arg_type(&Func::operator()));
@@ -40,6 +35,7 @@ template <class Func, class... Funcs>
 bool visit_ast_node(nlang::ast_node* n, Func f, Funcs... fs) {
 	return visit_ast_node_type(n, f) || visit_ast_node(n, fs...);
 }
+
 template <class Func>
 bool visit_ast_node(nlang::ast_node* n, Func f) {
 	return visit_ast_node_type(n, f);
